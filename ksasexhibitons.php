@@ -8,6 +8,37 @@ Author: Timmy Gelles
 Author URI: mailto:tgelles@jhu.edu
 License: GPL2
 */
+// hook into the init action and call create_book_taxonomies when it fires
+add_action( 'init', 'create_ksasexhibits_taxonomies', 0 );
+
+// create two taxonomies, genres and writers for the post type "book"
+function create_ksasexhibits_taxonomies() {
+	// Add new taxonomy, make it hierarchical (like categories)
+	$labels = array(
+			'name' 					=> _x( 'Exhibition Types', 'taxonomy general name' ),
+			'singular_name' 		=> _x( 'Exhibition Type', 'taxonomy singular name' ),
+			'add_new' 				=> _x( 'Add New Exhibition Type', 'Exhibition Type'),
+			'add_new_item' 			=> __( 'Add New Exhibition Type' ),
+			'edit_item' 			=> __( 'Edit Exhibition Type' ),
+			'new_item' 				=> __( 'New Exhibition Type' ),
+			'view_item' 			=> __( 'View Exhibition Type' ),
+			'search_items' 			=> __( 'Search Exhibition Types' ),
+			'not_found' 			=> __( 'No Exhibition Type found' ),
+			'not_found_in_trash' 	=> __( 'No Exhibition Type found in Trash' ),
+		);
+
+		$args = array(
+			'labels' 			=> $labels,
+			'singular_label' 	=> __('Exhibiton Type'),
+			'public' 			=> true,
+			'show_ui' 			=> true,
+			'hierarchical' 		=> true,
+			'show_tagcloud' 	=> false,
+			'show_in_nav_menus' => false,
+			'rewrite' 			=> array('slug' => 'exhibiton', 'with_front' => false ),
+		 );
+	register_taxonomy( 'exhibition_type', 'ksasexhibits', $args );
+}
 
 function register_ksasexhibits_posttype() {
 	$labels = array(
@@ -25,7 +56,7 @@ function register_ksasexhibits_posttype() {
 			'menu_name'			=> __( 'Exhibits & Programs' )
 		);
 
-		$taxonomies = array();
+		//$taxonomies = array( 'exhibition_type' );
 		
 		$supports = array('title','revisions','thumbnail' );
 
@@ -42,12 +73,12 @@ function register_ksasexhibits_posttype() {
 			'rewrite' 			=> array('slug' => 'exhibitons', 'with_front' => false ),
 			'supports' 			=> $supports,
 			'menu_position' 	=> 5,
-			'taxonomies'		=> $taxonomies,
+			//'taxonomies'		=> $taxonomies,
 			'show_in_nav_menus' => true
 		 );
- register_post_type('ksasexhibits',$post_type_args);
+	register_post_type('ksasexhibits',$post_type_args);
 }
-	add_action('init', 'register_ksasexhibits_posttype');
+add_action('init', 'register_ksasexhibits_posttype');
 
 $exhibitinformation_5_metabox = array(
 	'id' => 'exhibitinformation',
@@ -203,45 +234,31 @@ function ecpt_exhibitinformation_5_save($post_id) {
 	}
 }
 
-function check_exhibition_type_tax() {
-		$labels = array(
-			'name' 					=> _x( 'Exhibition Types', 'taxonomy general name' ),
-			'singular_name' 		=> _x( 'Exhibition Type', 'taxonomy singular name' ),
-			'add_new' 				=> _x( 'Add New Exhibition Type', 'Exhibition Type'),
-			'add_new_item' 			=> __( 'Add New Exhibition Type' ),
-			'edit_item' 			=> __( 'Edit Exhibition Type' ),
-			'new_item' 				=> __( 'New Exhibition Type' ),
-			'view_item' 			=> __( 'View Exhibition Type' ),
-			'search_items' 			=> __( 'Search Exhibition Types' ),
-			'not_found' 			=> __( 'No Exhibition Type found' ),
-			'not_found_in_trash' 	=> __( 'No Exhibition Type found in Trash' ),
-		);
-
-		$pages = array('ksasexhibits');
-
-		$args = array(
-			'labels' 			=> $labels,
-			'singular_label' 	=> __('Exhibiton Type'),
-			'public' 			=> true,
-			'show_ui' 			=> true,
-			'hierarchical' 		=> true,
-			'show_tagcloud' 	=> false,
-			'show_in_nav_menus' => false,
-			'rewrite' 			=> array('slug' => 'exhibiton', 'with_front' => false ),
-		 );
-		register_taxonomy('exhibition_type', $pages, $args);
+function define_exhibiton_type_terms() {
+	$terms = array(
+		'0' => array( 'name' => 'Campus Partnerships','slug' => 'campus'),
+		'1' => array( 'name' => 'Community Partnerships','slug' => 'community'),
+		'2' => array( 'name' => 'Independent Study','slug' => 'independent'),
+		'3' => array( 'name' => 'Digital Work.','slug' => 'digital'),
+		'4' => array( 'name' => 'Mellon Foundation','slug' => 'mellon'),
+    	);
+    return $terms;
 }
-
-	add_action('init', 'register_exhibition_type_tax');
 
 function check_exhibition_type_terms(){
 
 	//see if we already have populated any terms
-	$term = get_terms ('exhibition_type', array( 'hide_empty' => false ) );
+	$terms = get_terms ('exhibition_type', array( 'hide_empty' => false ) );
 
 	//if no terms then lets add our terms
-	  if( empty( $term ) ){
-        $terms = define_exhibition_type_terms();
+	  if( empty( $terms ) ){
+	$terms = array(
+		'0' => array( 'name' => 'Campus Partnerships','slug' => 'campus'),
+		'1' => array( 'name' => 'Community Partnerships','slug' => 'community'),
+		'2' => array( 'name' => 'Independent Study','slug' => 'independent'),
+		'3' => array( 'name' => 'Digital Work.','slug' => 'digital'),
+		'4' => array( 'name' => 'Mellon Foundation','slug' => 'mellon'),
+    	);
         foreach( $terms as $term ){
             if( !term_exists( $term['name'], 'exhibition_type' ) ){
                 wp_insert_term( $term['name'], 'exhibition_type', array( 'slug' => $term['slug'] ) );
@@ -253,18 +270,7 @@ function check_exhibition_type_terms(){
 
 add_action ( 'init', 'check_exhibition_type_terms' );
 
-function define_exhibiton_type_terms(){
- 
-$terms = array(
-		'0' => array( 'name' => 'Campus Partnerships','slug' => 'campus'),
-		'1' => array( 'name' => 'Community Partnerships','slug' => 'community'),
-		'2' => array( 'name' => 'Independent Study','slug' => 'independent'),
-		'3' => array( 'name' => 'Digital Work.','slug' => 'digital'),
-		'4' => array( 'name' => 'Mellon Foundation','slug' => 'mellon'),
-    );
- 
-    return $terms;
-}
+
 
 add_filter( 'manage_edit-ksasexhibits_columns', 'my_ksasexhibits_columns' ) ;
 
