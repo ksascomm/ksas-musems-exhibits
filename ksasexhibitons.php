@@ -35,7 +35,7 @@ function create_ksasexhibits_taxonomies() {
 			'hierarchical' 		=> true,
 			'show_tagcloud' 	=> false,
 			'show_in_nav_menus' => false,
-			'rewrite' 			=> array('slug' => 'exhibiton', 'with_front' => false ),
+			'rewrite' 			=> array('slug' => 'exhibition', 'with_front' => false ),
 		 );
 	register_taxonomy( 'exhibition_type', 'ksasexhibits', $args );
 }
