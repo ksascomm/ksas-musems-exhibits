@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: KSAS Museums Exhibitons & Programs
+Plugin Name: KSAS Museums Exhibitions & Programs
 Plugin URI:  http://krieger.jhu.edu/documentation/plugins/job-market/
 Description: Custom Content Type for Museum's & Society Program. Based on Flagship Content Types
 Version: 1.0
@@ -29,7 +29,7 @@ function create_ksasexhibits_taxonomies() {
 
 		$args = array(
 			'labels' 			=> $labels,
-			'singular_label' 	=> __('Exhibiton Type'),
+			'singular_label' 	=> __('Exhibition Type'),
 			'public' 			=> true,
 			'show_ui' 			=> true,
 			'hierarchical' 		=> true,
@@ -70,7 +70,7 @@ function register_ksasexhibits_posttype() {
 			'capability_type' 	=> 'post',
 			'has_archive' 		=> false,
 			'hierarchical' 		=> true,
-			'rewrite' 			=> array('slug' => 'exhibitons', 'with_front' => false ),
+			'rewrite' 			=> array('slug' => 'exhibitions', 'with_front' => false ),
 			'supports' 			=> $supports,
 			'menu_position' 	=> 5,
 			//'taxonomies'		=> $taxonomies,
@@ -89,7 +89,7 @@ $exhibitinformation_5_metabox = array(
 	'fields' => array(
 
 		array(
-			'title' 		=> 'Title',
+			'name' 		=> 'Title',
 			'desc' 			=> '',
 			'id' 				=> 'ecpt_exhibit_title',
 			'class' 			=> 'ecpt_exhibit_title',
@@ -122,12 +122,23 @@ $exhibitinformation_5_metabox = array(
 			),
 
 		array(
-			'name' 			=> 'Description',
+			'name' 			=> 'Full Description',
 			'desc' 			=> '',
-			'id' 				=> 'ecpt_description',
-			'class' 			=> 'ecpt_description',
+			'id' 				=> 'ecpt_description_full',
+			'class' 			=> 'ecpt_description_full',
 			'type' 			=> 'textarea',
-			'rich_editor' 	=> 0,			
+			'rich_editor' 	=> 1,			
+			'max' 			=> 0,
+			'std'			=> ''		
+			),
+
+		array(
+			'name' 			=> 'Short Description',
+			'desc' 			=> '',
+			'id' 				=> 'ecpt_description_short',
+			'class' 			=> 'ecpt_description_short',
+			'type' 			=> 'textarea',
+			'rich_editor' 	=> 1,			
 			'max' 			=> 0,
 			'std'			=> ''		
 			),
@@ -234,12 +245,12 @@ function ecpt_exhibitinformation_5_save($post_id) {
 	}
 }
 
-function define_exhibiton_type_terms() {
+function define_exhibition_type_terms() {
 	$terms = array(
 		'0' => array( 'name' => 'Campus Partnerships','slug' => 'campus'),
 		'1' => array( 'name' => 'Community Partnerships','slug' => 'community'),
 		'2' => array( 'name' => 'Independent Study','slug' => 'independent'),
-		'3' => array( 'name' => 'Digital Work.','slug' => 'digital'),
+		'3' => array( 'name' => 'Digital Work','slug' => 'digital'),
 		'4' => array( 'name' => 'Mellon Foundation','slug' => 'mellon'),
     	);
     return $terms;
@@ -256,7 +267,7 @@ function check_exhibition_type_terms(){
 		'0' => array( 'name' => 'Campus Partnerships','slug' => 'campus'),
 		'1' => array( 'name' => 'Community Partnerships','slug' => 'community'),
 		'2' => array( 'name' => 'Independent Study','slug' => 'independent'),
-		'3' => array( 'name' => 'Digital Work.','slug' => 'digital'),
+		'3' => array( 'name' => 'Digital Work','slug' => 'digital'),
 		'4' => array( 'name' => 'Mellon Foundation','slug' => 'mellon'),
     	);
         foreach( $terms as $term ){
@@ -279,23 +290,23 @@ function my_ksasexhibits_columns( $columns ) {
 	$columns = array(
 		'cb' => '<input type="checkbox" />',
 		'title' => __( 'Name' ),
-		'exhibitons' => __( 'Exhibiton Type' ),
+		'exhibitions' => __( 'Exhibition Type' ),
 		'date' => __( 'Date' ),
 	);
 
 	return $columns;
 }
 
-add_action( 'manage_studyfields_posts_custom_column', 'my_manage_ksasexhibits_columns', 10, 2 );
+add_action( 'manage_ksasexhibits_posts_custom_column', 'my_manage_ksasexhibits_columns', 10, 2 );
 
-function my_manage_program_columns( $column, $post_id ) {
+function my_manage_ksasexhibits_columns( $column, $post_id ) {
 	global $post;
 
 	switch( $column ) {
 
 		/* If displaying the 'program_type' column. */
 
-		case 'exhibitons' :
+		case 'exhibitions' :
 
 			/* Get the program_types for the post. */
 			$terms = get_the_terms( $post_id, 'exhibition_type' );
@@ -308,8 +319,8 @@ function my_manage_program_columns( $column, $post_id ) {
 				/* Loop through each term, linking to the 'edit posts' page for the specific term. */
 				foreach ( $terms as $term ) {
 					$out[] = sprintf( '<a href="%s">%s</a>',
-						esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'exhibiton_type' => $term->slug ), 'edit.php' ) ),
-						esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'exhibiton_type', 'display' ) )
+						esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'exhibition_type' => $term->slug ), 'edit.php' ) ),
+						esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'exhibition_type', 'display' ) )
 					);
 				}
 
@@ -319,7 +330,7 @@ function my_manage_program_columns( $column, $post_id ) {
 
 			/* If no terms were found, output a default message. */
 			else {
-				_e( 'No Exhibitons Assigned' );
+				_e( 'No Exhibitions Assigned' );
 			}
 
 			break;
