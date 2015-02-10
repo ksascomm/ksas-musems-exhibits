@@ -3,7 +3,7 @@
   "type": "wordpress-plugin",
   "license": "GPL2",
   "description": "Custom Content Type for Museum's & Society Program. Based on Flagship Content Types",
-  "homepage": "http://github.com/ksascomm/plugin_ksas_museums_exhibitons",
+  "homepage": "http://github.com/ksascomm/ksas-museums-exhibits",
   "authors": [
       {
       "name": "Cara Peckens",

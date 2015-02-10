@@ -1,3 +1,3 @@
-plugin_ksas_museums_exhibitons
+ksas-museums-exhibits
 =============================
 
