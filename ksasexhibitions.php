@@ -70,7 +70,7 @@ function register_ksasexhibits_posttype() {
 			'capability_type' 	=> 'post',
 			'has_archive' 		=> false,
 			'hierarchical' 		=> true,
-			'rewrite' 			=> array('slug' => 'exhibitions', 'with_front' => false ),
+			'rewrite' 			=> array('slug' => 'exhibit', 'with_front' => false ),
 			'supports' 			=> $supports,
 			'menu_position' 	=> 5,
 			//'taxonomies'		=> $taxonomies,
